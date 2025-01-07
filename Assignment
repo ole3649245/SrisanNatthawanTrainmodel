@@ -1,0 +1,467 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyO75+e2EzECJE+wAVsy8AOj",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/ole3649245/API/blob/main/Trainmodel\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from google.colab import files\n",
+        "import zipfile\n",
+        "import os\n",
+        "\n",
+        "#upload ZIP\n",
+        "uploaded = files.upload()\n",
+        "\n",
+        "#ZIP\n",
+        "for file_name in uploaded.keys():\n",
+        "    if file_name.endswith('.zip'):\n",
+        "        with zipfile.ZipFile(file_name, 'r') as zip_ref:\n",
+        "            zip_ref.extractall()\n",
+        "            print(f\"Extracted: {file_name}\")\n",
+        "\n",
+        "\n",
+        "print(os.listdir(\".\"))"
+      ],
+      "metadata": {
+        "id": "YG2rEG-9Vkry",
+        "outputId": "ea0ae63c-d6a5-4137-f76c-a9181df982f0",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 129
+        }
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/plain": [
+              "<IPython.core.display.HTML object>"
+            ],
+            "text/html": [
+              "\n",
+              "     <input type=\"file\" id=\"files-f126916e-fba1-4611-ae5e-e4e124e30516\" name=\"files[]\" multiple disabled\n",
+              "        style=\"border:none\" />\n",
+              "     <output id=\"result-f126916e-fba1-4611-ae5e-e4e124e30516\">\n",
+              "      Upload widget is only available when the cell has been executed in the\n",
+              "      current browser session. Please rerun this cell to enable.\n",
+              "      </output>\n",
+              "      <script>// Copyright 2017 Google LLC\n",
+              "//\n",
+              "// Licensed under the Apache License, Version 2.0 (the \"License\");\n",
+              "// you may not use this file except in compliance with the License.\n",
+              "// You may obtain a copy of the License at\n",
+              "//\n",
+              "//      http://www.apache.org/licenses/LICENSE-2.0\n",
+              "//\n",
+              "// Unless required by applicable law or agreed to in writing, software\n",
+              "// distributed under the License is distributed on an \"AS IS\" BASIS,\n",
+              "// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n",
+              "// See the License for the specific language governing permissions and\n",
+              "// limitations under the License.\n",
+              "\n",
+              "/**\n",
+              " * @fileoverview Helpers for google.colab Python module.\n",
+              " */\n",
+              "(function(scope) {\n",
+              "function span(text, styleAttributes = {}) {\n",
+              "  const element = document.createElement('span');\n",
+              "  element.textContent = text;\n",
+              "  for (const key of Object.keys(styleAttributes)) {\n",
+              "    element.style[key] = styleAttributes[key];\n",
+              "  }\n",
+              "  return element;\n",
+              "}\n",
+              "\n",
+              "// Max number of bytes which will be uploaded at a time.\n",
+              "const MAX_PAYLOAD_SIZE = 100 * 1024;\n",
+              "\n",
+              "function _uploadFiles(inputId, outputId) {\n",
+              "  const steps = uploadFilesStep(inputId, outputId);\n",
+              "  const outputElement = document.getElementById(outputId);\n",
+              "  // Cache steps on the outputElement to make it available for the next call\n",
+              "  // to uploadFilesContinue from Python.\n",
+              "  outputElement.steps = steps;\n",
+              "\n",
+              "  return _uploadFilesContinue(outputId);\n",
+              "}\n",
+              "\n",
+              "// This is roughly an async generator (not supported in the browser yet),\n",
+              "// where there are multiple asynchronous steps and the Python side is going\n",
+              "// to poll for completion of each step.\n",
+              "// This uses a Promise to block the python side on completion of each step,\n",
+              "// then passes the result of the previous step as the input to the next step.\n",
+              "function _uploadFilesContinue(outputId) {\n",
+              "  const outputElement = document.getElementById(outputId);\n",
+              "  const steps = outputElement.steps;\n",
+              "\n",
+              "  const next = steps.next(outputElement.lastPromiseValue);\n",
+              "  return Promise.resolve(next.value.promise).then((value) => {\n",
+              "    // Cache the last promise value to make it available to the next\n",
+              "    // step of the generator.\n",
+              "    outputElement.lastPromiseValue = value;\n",
+              "    return next.value.response;\n",
+              "  });\n",
+              "}\n",
+              "\n",
+              "/**\n",
+              " * Generator function which is called between each async step of the upload\n",
+              " * process.\n",
+              " * @param {string} inputId Element ID of the input file picker element.\n",
+              " * @param {string} outputId Element ID of the output display.\n",
+              " * @return {!Iterable<!Object>} Iterable of next steps.\n",
+              " */\n",
+              "function* uploadFilesStep(inputId, outputId) {\n",
+              "  const inputElement = document.getElementById(inputId);\n",
+              "  inputElement.disabled = false;\n",
+              "\n",
+              "  const outputElement = document.getElementById(outputId);\n",
+              "  outputElement.innerHTML = '';\n",
+              "\n",
+              "  const pickedPromise = new Promise((resolve) => {\n",
+              "    inputElement.addEventListener('change', (e) => {\n",
+              "      resolve(e.target.files);\n",
+              "    });\n",
+              "  });\n",
+              "\n",
+              "  const cancel = document.createElement('button');\n",
+              "  inputElement.parentElement.appendChild(cancel);\n",
+              "  cancel.textContent = 'Cancel upload';\n",
+              "  const cancelPromise = new Promise((resolve) => {\n",
+              "    cancel.onclick = () => {\n",
+              "      resolve(null);\n",
+              "    };\n",
+              "  });\n",
+              "\n",
+              "  // Wait for the user to pick the files.\n",
+              "  const files = yield {\n",
+              "    promise: Promise.race([pickedPromise, cancelPromise]),\n",
+              "    response: {\n",
+              "      action: 'starting',\n",
+              "    }\n",
+              "  };\n",
+              "\n",
+              "  cancel.remove();\n",
+              "\n",
+              "  // Disable the input element since further picks are not allowed.\n",
+              "  inputElement.disabled = true;\n",
+              "\n",
+              "  if (!files) {\n",
+              "    return {\n",
+              "      response: {\n",
+              "        action: 'complete',\n",
+              "      }\n",
+              "    };\n",
+              "  }\n",
+              "\n",
+              "  for (const file of files) {\n",
+              "    const li = document.createElement('li');\n",
+              "    li.append(span(file.name, {fontWeight: 'bold'}));\n",
+              "    li.append(span(\n",
+              "        `(${file.type || 'n/a'}) - ${file.size} bytes, ` +\n",
+              "        `last modified: ${\n",
+              "            file.lastModifiedDate ? file.lastModifiedDate.toLocaleDateString() :\n",
+              "                                    'n/a'} - `));\n",
+              "    const percent = span('0% done');\n",
+              "    li.appendChild(percent);\n",
+              "\n",
+              "    outputElement.appendChild(li);\n",
+              "\n",
+              "    const fileDataPromise = new Promise((resolve) => {\n",
+              "      const reader = new FileReader();\n",
+              "      reader.onload = (e) => {\n",
+              "        resolve(e.target.result);\n",
+              "      };\n",
+              "      reader.readAsArrayBuffer(file);\n",
+              "    });\n",
+              "    // Wait for the data to be ready.\n",
+              "    let fileData = yield {\n",
+              "      promise: fileDataPromise,\n",
+              "      response: {\n",
+              "        action: 'continue',\n",
+              "      }\n",
+              "    };\n",
+              "\n",
+              "    // Use a chunked sending to avoid message size limits. See b/62115660.\n",
+              "    let position = 0;\n",
+              "    do {\n",
+              "      const length = Math.min(fileData.byteLength - position, MAX_PAYLOAD_SIZE);\n",
+              "      const chunk = new Uint8Array(fileData, position, length);\n",
+              "      position += length;\n",
+              "\n",
+              "      const base64 = btoa(String.fromCharCode.apply(null, chunk));\n",
+              "      yield {\n",
+              "        response: {\n",
+              "          action: 'append',\n",
+              "          file: file.name,\n",
+              "          data: base64,\n",
+              "        },\n",
+              "      };\n",
+              "\n",
+              "      let percentDone = fileData.byteLength === 0 ?\n",
+              "          100 :\n",
+              "          Math.round((position / fileData.byteLength) * 100);\n",
+              "      percent.textContent = `${percentDone}% done`;\n",
+              "\n",
+              "    } while (position < fileData.byteLength);\n",
+              "  }\n",
+              "\n",
+              "  // All done.\n",
+              "  yield {\n",
+              "    response: {\n",
+              "      action: 'complete',\n",
+              "    }\n",
+              "  };\n",
+              "}\n",
+              "\n",
+              "scope.google = scope.google || {};\n",
+              "scope.google.colab = scope.google.colab || {};\n",
+              "scope.google.colab._files = {\n",
+              "  _uploadFiles,\n",
+              "  _uploadFilesContinue,\n",
+              "};\n",
+              "})(self);\n",
+              "</script> "
+            ]
+          },
+          "metadata": {}
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Saving archive (1).zip to archive (1) (1).zip\n",
+            "Extracted: archive (1) (1).zip\n",
+            "['.config', 'archive (1) (1).zip', 'test_energy_data[1].csv', 'test_energy_data.csv', 'archive (1).zip', 'archive.zip', 'train_energy_data.csv', 'sample_data']\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import pandas as pd\n",
+        "\n",
+        "#CSV\n",
+        "train_data = pd.read_csv('train_energy_data.csv')\n",
+        "print(\"Train Data:\")\n",
+        "print(train_data.head())\n",
+        "\n",
+        "test_data = pd.read_csv('test_energy_data.csv')\n",
+        "print(\"\\nTest Data:\")\n",
+        "print(test_data.head())"
+      ],
+      "metadata": {
+        "id": "002JPfsdVuUD",
+        "outputId": "9124b37c-ed2e-4d7a-b1f4-722bee607a44",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Train Data:\n",
+            "  Building Type  Square Footage  Number of Occupants  Appliances Used  \\\n",
+            "0   Residential            7063                   76               10   \n",
+            "1    Commercial           44372                   66               45   \n",
+            "2    Industrial           19255                   37               17   \n",
+            "3   Residential           13265                   14               41   \n",
+            "4    Commercial           13375                   26               18   \n",
+            "\n",
+            "   Average Temperature Day of Week  Energy Consumption  \n",
+            "0                29.84     Weekday             2713.95  \n",
+            "1                16.72     Weekday             5744.99  \n",
+            "2                14.30     Weekend             4101.24  \n",
+            "3                32.82     Weekday             3009.14  \n",
+            "4                11.92     Weekday             3279.17  \n",
+            "\n",
+            "Test Data:\n",
+            "  Building Type  Square Footage  Number of Occupants  Appliances Used  \\\n",
+            "0   Residential           24563                   15                4   \n",
+            "1    Commercial           27583                   56               23   \n",
+            "2    Commercial           45313                    4               44   \n",
+            "3   Residential           41625                   84               17   \n",
+            "4   Residential           36720                   58               47   \n",
+            "\n",
+            "   Average Temperature Day of Week  Energy Consumption  \n",
+            "0                28.52     Weekday             2865.57  \n",
+            "1                23.07     Weekend             4283.80  \n",
+            "2                33.56     Weekday             5067.83  \n",
+            "3                27.39     Weekend             4624.30  \n",
+            "4                17.08     Weekday             4820.59  \n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "print(train_data.info())\n",
+        "print(train_data.describe())\n",
+        "print(train_data.isnull().sum())"
+      ],
+      "metadata": {
+        "id": "guilhZy0WPG5",
+        "outputId": "a386b3e0-3d1e-4737-9565-543a5608f816",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "<class 'pandas.core.frame.DataFrame'>\n",
+            "RangeIndex: 1000 entries, 0 to 999\n",
+            "Data columns (total 7 columns):\n",
+            " #   Column               Non-Null Count  Dtype  \n",
+            "---  ------               --------------  -----  \n",
+            " 0   Building Type        1000 non-null   object \n",
+            " 1   Square Footage       1000 non-null   int64  \n",
+            " 2   Number of Occupants  1000 non-null   int64  \n",
+            " 3   Appliances Used      1000 non-null   int64  \n",
+            " 4   Average Temperature  1000 non-null   float64\n",
+            " 5   Day of Week          1000 non-null   object \n",
+            " 6   Energy Consumption   1000 non-null   float64\n",
+            "dtypes: float64(2), int64(3), object(2)\n",
+            "memory usage: 54.8+ KB\n",
+            "None\n",
+            "       Square Footage  Number of Occupants  Appliances Used  \\\n",
+            "count        1000.000          1000.000000      1000.000000   \n",
+            "mean        25462.388            48.372000        25.606000   \n",
+            "std         14294.554            29.061972        14.105166   \n",
+            "min           560.000             1.000000         1.000000   \n",
+            "25%         13169.750            22.000000        13.000000   \n",
+            "50%         25477.000            47.000000        26.000000   \n",
+            "75%         37446.250            73.250000        38.000000   \n",
+            "max         49997.000            99.000000        49.000000   \n",
+            "\n",
+            "       Average Temperature  Energy Consumption  \n",
+            "count          1000.000000         1000.000000  \n",
+            "mean             22.611390         4166.252570  \n",
+            "std               7.139943          933.313064  \n",
+            "min              10.050000         1683.950000  \n",
+            "25%              16.475000         3509.482500  \n",
+            "50%              22.815000         4175.730000  \n",
+            "75%              28.850000         4863.850000  \n",
+            "max              34.990000         6530.600000  \n",
+            "Building Type          0\n",
+            "Square Footage         0\n",
+            "Number of Occupants    0\n",
+            "Appliances Used        0\n",
+            "Average Temperature    0\n",
+            "Day of Week            0\n",
+            "Energy Consumption     0\n",
+            "dtype: int64\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "X_train = train_data.drop(columns=['Energy Consumption'])\n",
+        "y_train = train_data['Energy Consumption']\n",
+        "\n",
+        "X_test = test_data.drop(columns=['Energy Consumption'])\n",
+        "y_test = test_data['Energy Consumption']"
+      ],
+      "metadata": {
+        "id": "GkjmNijcZ2eL"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from sklearn.preprocessing import LabelEncoder\n",
+        "\n",
+        "le = LabelEncoder()\n",
+        "X_train['Day of Week'] = le.fit_transform(X_train['Day of Week'])\n",
+        "X_test['Day of Week'] = le.transform(X_test['Day of Week'])"
+      ],
+      "metadata": {
+        "id": "VPYRs8TvaHfy"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "X_train = pd.get_dummies(X_train, columns=['Building Type'], drop_first=True)\n",
+        "X_test = pd.get_dummies(X_test, columns=['Building Type'], drop_first=True)"
+      ],
+      "metadata": {
+        "id": "Ls7GbilscJds"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from sklearn.linear_model import LinearRegression\n",
+        "from sklearn.metrics import mean_squared_error\n",
+        "\n",
+        "model = LinearRegression()\n",
+        "model.fit(X_train, y_train)\n",
+        "\n",
+        "\n",
+        "y_pred = model.predict(X_test)\n",
+        "\n",
+        "\n",
+        "mse = mean_squared_error(y_test, y_pred)\n",
+        "print(f\"Mean Squared Error: {mse}\")"
+      ],
+      "metadata": {
+        "id": "5XJkMRTOcO_9",
+        "outputId": "abdf1be2-797e-45ce-9fd9-3755b21b9766",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Mean Squared Error: 0.00020154241156390722\n"
+          ]
+        }
+      ]
+    }
+  ]
+}
